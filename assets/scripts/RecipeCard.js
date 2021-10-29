@@ -1,7 +1,8 @@
 class RecipeCard extends HTMLElement {
   constructor() {
     // Part 1 Expose - TODO
-
+    super();
+    this.attachShadow({mode: 'open'});
     // You'll want to attach the shadow DOM here
   }
 
@@ -86,8 +87,6 @@ class RecipeCard extends HTMLElement {
     styleElem.innerHTML = styles;
 
     // Here's the root element that you'll want to attach all of your other elements to
-    const card = document.createElement('article');
-
     // Some functions that will be helpful here:
     //    document.createElement()
     //    document.querySelector()
@@ -100,6 +99,45 @@ class RecipeCard extends HTMLElement {
     // created in the constructor()
 
     // Part 1 Expose - TODO
+
+    const card = document.createElement('article');
+
+    let shadow = this.shadowRoot;
+    shadow.appendChild(styleElem);
+    shadow.appendChild(card);
+
+    //get recipe title
+    const recipe_title = searchForKey(data, 'headline');
+
+    //create thumbnail img
+    const recipe_img = document.createElement('img');
+    const imgUrl = searchForKey(data,'thumbnailUrl'); 
+    recipe_img.setAttribute('alt', recipe_title);
+    recipe_img.setAttribute('src', imgUrl);
+
+    //create title class
+    const title = document.createElement('p');
+    title.className = 'title';
+
+    //create title link
+    const link = document.createElement('a');
+    const recipe_url = getUrl(data);
+    link.href = recipe_url;
+    link.innerHTML = recipe_title;
+    
+    //append link to title class
+    title.appendChild(link);
+
+    //create organization class 
+    const org = document.createElement('p');
+    org.className = 'organization';
+    const org_name = getOrganization(data);
+    org.innerText = org_name;
+
+    //append all elements to card
+    card.appendChild(recipe_img);
+    card.appendChild(title);
+    card.appendChild(org);
   }
 }
 
