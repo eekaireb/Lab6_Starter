@@ -111,33 +111,72 @@ class RecipeCard extends HTMLElement {
 
     //create thumbnail img
     const recipe_img = document.createElement('img');
-    const imgUrl = searchForKey(data,'thumbnailUrl'); 
     recipe_img.setAttribute('alt', recipe_title);
-    recipe_img.setAttribute('src', imgUrl);
+    recipe_img.setAttribute('src', searchForKey(data,'thumbnailUrl'));
 
     //create title class
     const title = document.createElement('p');
-    title.className = 'title';
+    title.setAttribute('class', 'title');
 
     //create title link
     const link = document.createElement('a');
-    const recipe_url = getUrl(data);
-    link.href = recipe_url;
+    link.setAttribute('href', getUrl(data));
     link.innerHTML = recipe_title;
-    
+
     //append link to title class
     title.appendChild(link);
 
     //create organization class 
     const org = document.createElement('p');
-    org.className = 'organization';
-    const org_name = getOrganization(data);
-    org.innerText = org_name;
+    org.setAttribute('class', 'organization');
+    const org_name = document.createTextNode(getOrganization(data));
+    org.appendChild(org_name);
 
+    //create ratings elements
+    const ratings = document.createElement('div');
+    const ratings_span = document.createElement('span');
+    const ratings_total = document.createElement('span');
+    const ratings_pic = document.createElement('img');
+    ratings.setAttribute('class', 'rating');
+    
+    //check if rating exists
+    const ratingVal = searchForKey(data, 'ratingValue');
+    ratings.appendChild(ratings_span);
+    if(ratingVal != undefined )
+    {
+      ratings_span.appendChild(document.createTextNode(ratingVal));
+      let rounded_val = Math.round(ratingVal);
+      ratings_pic.setAttribute('src', 'assets/images/icons/'+rounded_val+'-star.svg');
+      ratings_pic.setAttribute('alt', rounded_val +" stars");
+      ratings_total.appendChild(document.createTextNode(searchForKey(data, 'ratingCount')));
+      ratings.appendChild(ratings_pic);
+      ratings.appendChild(ratings_total);
+    }
+    else
+    {
+      ratings_span.appendChild(document.createTextNode("No Reviews"));
+    }
+
+
+    //time 
+    const time = document.createElement('time');
+    time.textContent = convertTime(searchForKey(data, 'totalTime'))
+
+
+    //ingredients
+    const ingredients_str = createIngredientList(searchForKey(data, 'recipeIngredient'));
+    const ingredients = document.createElement('p');
+    ingredients.setAttribute('class', 'ingredients');
+    ingredients.textContent = ingredients_str;
+    
     //append all elements to card
     card.appendChild(recipe_img);
     card.appendChild(title);
     card.appendChild(org);
+    card.appendChild(ratings);
+    card.appendChild(time);
+    card.appendChild(ingredients);
+    
   }
 }
 
